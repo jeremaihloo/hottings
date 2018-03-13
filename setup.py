@@ -8,11 +8,8 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     entry_points={
         'console_scripts': [
-            'hottings=hottings:monitors:main',
+            'hottings=hottings:main',
         ],
-    },
-    package_data={  # Optional
-        'sample': ['hottings.json'],
     },
     project_urls={  # Optional
         'Bug Reports': 'https://github.com/jeremaihloo/hottings/issues',

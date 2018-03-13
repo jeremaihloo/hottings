@@ -1,14 +1,14 @@
 {
   "excludes": null,
   "includes": null,
-  "py/object": "__main__.HottingMonitor",
+  "py/object": "hottings.monitors.HottingMonitor",
   "tasks": [
     {
-      "cmd": "python ./demo.py",
+      "cmd": "python demo.py",
       "excludes": [],
       "includes": [],
       "name": "demo",
-      "py/object": "__main__.HottingTask",
+      "py/object": "hottings.monitors.HottingTask",
       "reload": true,
       "src": "./"
     }

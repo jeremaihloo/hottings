@@ -23,48 +23,63 @@ def log(s):
 class MyFileSystemEventHander(FileSystemEventHandler):
     def __init__(self, fn, includes=None, excludes=None):
         super(MyFileSystemEventHander, self).__init__()
+
         self.includes = includes or ['.*?.py']
         self.excludes = excludes or []
         self.restart = fn
 
     def on_any_event(self, event):
         log('Python source file changed: %s' % event.src_path)
+        if self._match_includes(event.src_path) and not self._match_excludes(event.src_path):
+            self.restart()
 
+    def _match_includes(self, path):
         for item in self.includes:
-            print(item, event.src_path)
-            if re.match(item, event.src_path):
-                self.restart()
+            if re.match(item, path):
+                return True
+        return False
+
+    def _match_excludes(self, path):
+        for item in self.excludes:
+            if re.match(item, path):
+                return True
+        return False
 
 
 class HottingMonitor(object):
-    filename = 'hottings.json'
+    filename = os.path.join(os.curdir, 'hottings.json')
 
     def __init__(self, version=1, includes=None, excludes=None):
         self.version = version
         self.tasks: List[HottingTask] = []
 
-        self.includes = includes
-        self.excludes = excludes
+        self.includes = includes or ['.*?.py']
+        self.excludes = excludes or ['.*?__pycache__.*?']
 
     @staticmethod
-    def parse() -> 'HottingMonitor':
+    def parse(base=None) -> 'HottingMonitor':
+        HottingMonitor.filename = os.path.join(base, HottingMonitor.filename) if base else HottingMonitor.filename
         return jsonpickle.loads(open(HottingMonitor.filename, encoding='utf-8').read(),
                                 classes=[HottingTask, HottingMonitor])
 
-    def start(self):
+    def _start_tasks(self):
         for t in self.tasks:
             t.start()
 
-    def start_and_watch(self):
+    def start(self):
         try:
-            self.start()
+            self._start_tasks()
             self.watch()
         except FileNotFoundError as e:
             log(e)
 
     def watch(self):
         observer = Observer()
+        log('Starting tasks :')
         for t in self.tasks:
+            log('- {}'.format(t.name))
+            if not t.reload:
+                continue
             fs = MyFileSystemEventHander(t.restart, includes=self.includes, excludes=self.excludes)
             observer.schedule(fs, t.src, recursive=True)
             log('Watching directory %s...' % t.src)
@@ -100,7 +115,8 @@ class HottingTask(object):
         self.excludes = excludes or []
 
     def start(self):
-        self.process = subprocess.Popen(self.cmd.split(' '), stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+        self.process = subprocess.Popen(self.cmd.split(' '), cwd=os.path.curdir, stdin=sys.stdin, stdout=sys.stdout,
+                                        stderr=sys.stderr)
 
     def stop(self):
         self.process.send_signal(signal.SIGTERM)
@@ -153,10 +169,18 @@ def remove(name):
 
 
 @cli.command()
+def list():
+    """List all hotting task"""
+    monitor = HottingMonitor.parse()
+    for item in monitor.tasks:
+        print('- {}'.format(item.name))
+
+
+@cli.command()
 def start():
     """Start all tasks"""
     monitor = HottingMonitor.parse()
-    monitor.start_and_watch()
+    monitor.start()
 
 
 if __name__ == '__main__':

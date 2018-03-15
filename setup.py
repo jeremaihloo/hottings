@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hottings',
-    version='0.0.5',
+    version='0.0.6',
     description='A command line tool to manage hot reload tasks',
     author='jeremaihloo',
     author_email='jeremaihloo1024@gmail.com',

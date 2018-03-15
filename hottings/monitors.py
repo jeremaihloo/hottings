@@ -25,12 +25,12 @@ class MyFileSystemEventHander(FileSystemEventHandler):
         super(MyFileSystemEventHander, self).__init__()
 
         self.includes = includes or ['.*?.py']
-        self.excludes = excludes or []
+        self.excludes = excludes or ['.*?__pycache__.*?']
         self.restart = fn
 
     def on_any_event(self, event):
-        log('Python source file changed: %s' % event.src_path)
         if self._match_includes(event.src_path) and not self._match_excludes(event.src_path):
+            log('Python source file changed: %s' % event.src_path)
             self.restart()
 
     def _match_includes(self, path):
@@ -111,8 +111,8 @@ class HottingTask(object):
         self.src = src
         self.reload = reload
 
-        self.includes = includes or []
-        self.excludes = excludes or []
+        self.includes = includes or ['.*?.py']
+        self.excludes = excludes or ['.*?__pycache__.*?']
 
     def start(self):
         self.process = subprocess.Popen(self.cmd.split(' '), cwd=os.path.curdir, stdin=sys.stdin, stdout=sys.stdout,
@@ -132,6 +132,9 @@ class HottingTask(object):
 @click.group()
 def cli():
     """A command line tool to manage hot reload tasks"""
+    from version import __version__
+
+    log('Hottings version {version}'.format(version=__version__))
     pass
 
 

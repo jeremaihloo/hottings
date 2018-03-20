@@ -49,9 +49,9 @@ class MyFileSystemEventHander(FileSystemEventHandler):
 class HottingMonitor(object):
     filename = os.path.join(os.curdir, 'hottings.json')
 
-    def __init__(self, version=1, includes=None, excludes=None):
+    def __init__(self, version=1, includes=None, excludes=None, tasks: List['HottingTask'] = None):
         self.version = version
-        self.tasks: List[HottingTask] = []
+        self.tasks = tasks or []
 
         self.includes = includes or ['.*?.py']
         self.excludes = excludes or ['.*?__pycache__.*?']

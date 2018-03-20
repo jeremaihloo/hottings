@@ -1,6 +1,6 @@
 # Hottings
 
-|pypi| |unix_build| |windows_build| |coverage| |license|
+[![Build Status](https://travis-ci.org/ffaker/ffaker.svg?branch=master)](https://travis-ci.org/jeremaihloo/hottings)
 
 A command line tool to manage hot reload tasks
 

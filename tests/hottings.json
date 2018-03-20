@@ -1,0 +1,11 @@
+{
+  "excludes": [
+    ".*?__pycache__.*?"
+  ],
+  "includes": [
+    ".*?.py"
+  ],
+  "py/object": "hottings.monitors.HottingMonitor",
+  "tasks": [],
+  "version": 1
+}

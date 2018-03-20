@@ -132,7 +132,7 @@ class HottingTask(object):
 @click.group()
 def cli():
     """A command line tool to manage hot reload tasks"""
-    from version import __version__
+    from .version import __version__
 
     log('Hottings version {version}'.format(version=__version__))
     pass

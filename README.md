@@ -1,5 +1,7 @@
 # Hottings
 
+|pypi| |unix_build| |windows_build| |coverage| |license|
+
 A command line tool to manage hot reload tasks
 
 ## Usage
